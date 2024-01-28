@@ -3,7 +3,7 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json()); // A middleware
+app.use(express.json()); // A middleware (Make data sent from the user {body} be available in the {req} paramater)
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
