@@ -6,7 +6,9 @@ const usersRouter = require('./routes/usersroutes.js');
 
 const app = express();
 
-app.use(morgan('dev')); // A middleware thet gives me info about the request
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev')); // A middleware thet gives me info about the request
+}
 
 app.use(express.json()); // A middleware (Make data sent from the user {body} be available in the {req} paramater)
 
