@@ -21,6 +21,29 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
+app.get('/api/v1/tours/:id', (req, res) => {
+  // req.params => returns an object of all {{parameters}} in the URL
+  // /:param? => ? makes it {optional}
+
+  const tour = tours.find((tour) => tour.id === req.params.id * 1);
+
+  if (!tour) {
+    // tour is undefined => !tour is true
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  res.status(200).send({
+    status: 'Success', // This make it in (Jsend) format
+    results: tours.length,
+    data: {
+      tour,
+    },
+  });
+});
+
 app.post('/api/v1/tours', (req, res) => {
   const newID = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newID }, req.body);
