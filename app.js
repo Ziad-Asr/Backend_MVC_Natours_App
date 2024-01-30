@@ -7,7 +7,7 @@ const usersRouter = require('./routes/usersroutes.js');
 const app = express();
 
 //______________________________________________________________________________________________________________________
-// ## (Middlewares) ##
+// ## (Middlewares) ## {Applied on all routes (before them)}
 
 // Third-party middleware
 app.use(morgan('dev')); // A middleware thet gives me info about the request
@@ -35,9 +35,6 @@ app.use('/api/v1/users', usersRouter);
 //______________________________________________________________________________________________________________________
 // ## (Starting server) ##
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`App is running on ${port}`);
-});
+module.exports = app;
 
 //______________________________________________________________________________________________________________________
