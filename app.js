@@ -6,35 +6,21 @@ const usersRouter = require('./routes/usersroutes.js');
 
 const app = express();
 
-//______________________________________________________________________________________________________________________
-// ## (Middlewares) ## {Applied on all routes (before them)}
-
-// Third-party middleware
 app.use(morgan('dev')); // A middleware thet gives me info about the request
 
 app.use(express.json()); // A middleware (Make data sent from the user {body} be available in the {req} paramater)
 
-// Manual middleware
 app.use((req, res, next) => {
   console.log('Hello, from the middleware!');
   next();
 });
 
-// Manual middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
 
-//______________________________________________________________________________________________________________________
-// ## (Routes) ##
-
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
 
-//______________________________________________________________________________________________________________________
-// ## (Starting server) ##
-
 module.exports = app;
-
-//______________________________________________________________________________________________________________________
