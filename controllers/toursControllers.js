@@ -2,45 +2,37 @@ const Tour = require('./../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
-    //Filtering methods
-    // (1)
-    // console.log('req.query');
-    // console.log(req.query);
-
-    // (2)
-    // const tours = await Tour.find()
-    //   .where('duration')
-    //   .equals(5)
-    //   .whare('difficulty')
-    //   .equals('easy');
-
-    // (3)
-    // const tours = await Tour.find({
-    //   duration: 5,
-    //   difficulty: 'easy',
-    // });
-
-    // (4)
-    // const tours = await Tour.find(req.query);
-
-    // (5)
-    // const queryObj = { ...req.query };
-    // const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    // excludedFields.forEach((field) => delete queryObj[field]);
-    // const tours = await Tour.find(queryObj);
-
+    // ############
+    // Filtering ##
+    // ############
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((field) => delete queryObj[field]);
+    excludedFields.forEach((field) => delete queryObj[field]); // foreach only does it'sfunctionality without returning any array
 
     let queryString = JSON.stringify(queryObj);
     queryString = queryString.replace(
-      /\b(gte|gt|lte|lt)\b/g,
+      /\b(gte|gt|lte|lt)\b/g, // \b => exact match
       (match) => `$${match}`,
-    );
+    ); // replace function returns an array of new values
 
-    const query = Tour.find(JSON.parse(queryString));
+    let query = Tour.find(JSON.parse(queryString));
     // (find) returns a promise(query object) which I can consume later but I only (saved this promise into query variable).
+
+    //---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+
+    // ##########
+    // Sorting ##
+    // ##########
+    if (req.query.sort) {
+      query = query.sort(req.query.sort.split(',').join(' '));
+    } else {
+      query = query.sort('-createdAt');
+    }
+
+    //---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+
     const tours = await query;
     // (await) => consume the promise(query object), and then return (documents) that matches this query.
 
