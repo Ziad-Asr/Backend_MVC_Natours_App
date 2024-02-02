@@ -1,4 +1,5 @@
 const Tour = require('./../models/tourModel');
+const APIFeatures = require('./../utils/apiFeatures');
 
 exports.aliesTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -9,69 +10,12 @@ exports.aliesTopTours = (req, res, next) => {
 
 exports.getAllTours = async (req, res) => {
   try {
-    // ############
-    // Filtering ##
-    // ############
-    const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((field) => delete queryObj[field]); // foreach only does it'sfunctionality without returning any array
-
-    let queryString = JSON.stringify(queryObj);
-    queryString = queryString.replace(
-      /\b(gte|gt|lte|lt)\b/g, // \b => exact match
-      (match) => `$${match}`,
-    ); // replace function returns an array of new values
-
-    let query = Tour.find(JSON.parse(queryString));
-    // (find) returns a promise(query object) which I can consume later but I only (saved this promise into query variable).
-
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-    // ##########
-    // Sorting ##
-    // ##########
-    if (req.query.sort) {
-      query = query.sort(req.query.sort.split(',').join(' '));
-    } else {
-      query = query.sort('-createdAt');
-    }
-
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-    // ##################
-    // Fields limiting ##
-    // ##################
-    if (req.query.fields) {
-      query = query.select(req.query.fields.split(',').join(' '));
-    } else {
-      query = query.select('-__v');
-    }
-
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-    // #############
-    // Pagination ##
-    // #############
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-
-    query = query.skip(skip).limit(limit);
-
-    if (req.query.page) {
-      const toursNum = await Tour.countDocuments();
-      if (skip >= toursNum) {
-        throw new Error('This page is not exist'); // this redirect it to the catch block
-      }
-    }
-
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .pagination();
+    const tours = await features.query;
     // (await) => consume the promise(query object), and then return (documents) that matches this query.
 
     res.status(200).send({
