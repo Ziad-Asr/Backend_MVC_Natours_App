@@ -3,8 +3,8 @@ const APIFeatures = require('./../utils/apiFeatures');
 
 exports.aliesTopTours = (req, res, next) => {
   req.query.limit = '5';
-  req.query.sort = '-ratingAverage,price';
-  req.query.fields = 'name,price,summary,difficulty,ratingAverage';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,summary,difficulty,ratingsAverage';
   next();
 };
 
@@ -106,17 +106,17 @@ exports.deleteTour = async (req, res) => {
 exports.getTourStats = async (req, res) => {
   try {
     const stats = await Tour.aggregate([
-      // {
-      //   $match: {
-      //     ratingAverage: { $gte: 4.5 },
-      //   },
-      // },
+      {
+        $match: {
+          ratingsAverage: { $gte: 4.5 },
+        },
+      },
       {
         $group: {
           _id: { $toUpper: '$difficulty' },
           numTours: { $sum: 1 },
-          numRatings: { $sum: '$ratingQuantity' },
-          avgRatings: { $avg: '$ratingAverage' },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRatings: { $avg: '$ratingsAverage' },
           avgPrice: { $avg: '$price' },
           minPrice: { $min: '$price' },
           maxPrice: { $max: '$price' },
