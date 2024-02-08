@@ -44,7 +44,7 @@ app.all('*', (req, res, next) => {
 // ((( 2 )))
 // Global error handling ((middleware))
 app.use(globalErrorHandler);
-// The role of (((globalErrorHandler))) is to take the error thrown from the last ((next)) and send a response based on it
+// The role of (((globalErrorHandler))) is to take the error thrown from the last ((next)) {{{has called from any past route}}} and send a response based on it
 
 // _______________________________________________________________________________________________________________________________
 
