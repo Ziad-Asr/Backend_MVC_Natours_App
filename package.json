@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch server.js"
+    "start": "node --watch server.js",
+    "debug": "ndb server.js"
   },
   "author": "Ziad Elsayed",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "mongodb": "^6.3.0",
     "mongoose": "^5.13.22",
     "morgan": "^1.10.0",
+    "ndb": "^1.1.5",
     "prettier": "^3.2.4",
     "slugify": "^1.6.6",
     "validator": "^13.11.0"
