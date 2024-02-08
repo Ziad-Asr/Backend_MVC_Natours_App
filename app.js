@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const AppError = require('./utils/appError.js');
+const globalErrorHandler = require('./controllers/errorController.js');
 const toursRouter = require('./routes/toursRoutes.js');
 const usersRouter = require('./routes/usersroutes.js');
 
@@ -20,30 +22,30 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
 
+// _______________________________________________________________________________________________________________________________
+// ####################
+// ## Error handling ##
+// ####################
+
+// ((( 1 )))
+// It will only reach this part if the route that the user typed is not handled
 app.all('*', (req, res, next) => {
-  // res.status(404).json({
-  //   status: 'Fail',
-  //   message: `Cant't find ${req.originalUrl} on this server!`,
-  // });
-
-  const err = new Error(`Cant't find ${req.originalUrl} on this server!`);
-  err.statusCode = 404;
-  err.status = 'fail';
-
-  next(err);
-  // 1) Anything passed to the next function will be taken as an error
-  // 2) And then all next middlewares will be skipped until reaching out the error handeling function and pass the error to it.
+  next(new AppError(`Cant't find ${req.originalUrl} on this server!`, 404));
 });
+// 1) Anything passed to the next function will be taken as an error
+// 2) And then all next middlewares will be skipped until reaching out the error handeling function and pass the error to it.
 
-// Global error handling middleware
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error'; // It is {fail} on 404 and {error} on 500
+// So this next will throw this error {{AppError}} to the next middleware which will take the error and pass it to a specific error handling function
 
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-});
+// #######################################################################################################
+// ### The role of (((AppError))) is to {make an error} and the (next) throw it to the next middleware ###
+// #######################################################################################################
+
+// ((( 2 )))
+// Global error handling ((middleware))
+app.use(globalErrorHandler);
+// The role of (((globalErrorHandler))) is to take the error thrown from the last ((next)) and send a response based on it
+
+// _______________________________________________________________________________________________________________________________
 
 module.exports = app;

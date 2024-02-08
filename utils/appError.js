@@ -12,3 +12,11 @@ class AppError extends Error {
 }
 
 module.exports = AppError;
+
+// #############################################################################################################
+// ### The role of (((AppError))) is to { ((make)) an error } and the (next) throw it to the next middleware ###
+// #############################################################################################################
+
+// This error class accepts a
+// 1)message ((will send it the Error default js class))
+// 2)StatusCode of the error (we mae it dynamike to be able to use it throw out the project)
