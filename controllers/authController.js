@@ -38,10 +38,12 @@ exports.login = catchAsync(async (req, res, next) => {
   // 1) check if email & password are exist
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
+    // Use ((return)) to leave the (((login))) function
+    // use ((next)) to throw the error to the globalErrorHandeling function
   }
 
   // 2) check if user is exist & password is correct
-  const user = await User.findOne({ email }).select('+password'); // This is now a users document
+  const user = await User.findOne({ email }).select('+password'); // This is now a the user document
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
@@ -53,4 +55,8 @@ exports.login = catchAsync(async (req, res, next) => {
     status: 'Success',
     token,
   });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  next();
 });
